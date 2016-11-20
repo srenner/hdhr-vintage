@@ -5,8 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:hdhr_vintage"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="HDHR Vintage" Height="323" Width="800">
     <Grid>
-        
+        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="194,14,0,0" TextWrapping="Wrap" Text="C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe" VerticalAlignment="Top" Width="405"/>
+        <Label x:Name="label" Content="hdhomerun__config.exe location:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+        <Button x:Name="btnScan" Content="Channel Scan" HorizontalAlignment="Left" Margin="10,55,0,0" VerticalAlignment="Top" Width="100"/>
+        <Button x:Name="btnSetExecutable" Content="Set" HorizontalAlignment="Left" Margin="669,17,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="btnBrowseExecutable" Content="Browse" HorizontalAlignment="Left" Margin="604,17,0,0" VerticalAlignment="Top" Width="60"/>
+        <Separator HorizontalAlignment="Left" Height="8" Margin="10,42,0,0" VerticalAlignment="Top" Width="773"/>
+        <ListView x:Name="lvChannels" HorizontalAlignment="Left" Height="203" Margin="10,80,0,0" VerticalAlignment="Top" Width="100">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
     </Grid>
 </Window>
