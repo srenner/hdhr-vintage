@@ -102,9 +102,13 @@ namespace hdhr_vintage
         {
 
 
-            string commandArgs = "10183772 set /tuner1/target rtp://192.168.1.81:5000";
-            ExecuteCommand(commandArgs);
+            //string commandArgs = "10183772 set /tuner1/target rtp://192.168.1.81:5000";
+            //ExecuteCommand(commandArgs);
 
+            string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", "192.168.1.81", "5000");
+            string result = ExecuteCommand(args);
+
+            UpdateInfoText(result);
 
 
             var process = new Process();
