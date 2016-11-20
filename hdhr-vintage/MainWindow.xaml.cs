@@ -24,6 +24,7 @@ namespace hdhr_vintage
         
         //todo fetch this from the textbox
         private string ConfigExecutable = "C:\\Program Files\\Silicondust\\HDHomeRun\\hdhomerun_config.exe";
+        private string TunerID = "";
 
         public MainWindow()
         {
@@ -50,6 +51,7 @@ namespace hdhr_vintage
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff") + " - " + "tuner scan output (exit code " + exitCode + ") - " + output);
 
             UpdateStatusBarText(output);
+            UpdateInfoText(output);
         }
 
         private void UpdateStatusBarText(string text)
@@ -58,6 +60,60 @@ namespace hdhr_vintage
             {
                 statusText.Text = text.Trim();
             });
+        }
+
+        private void UpdateInfoText(string text)
+        {
+            text = text.Trim() + "\r\n==========\r\n" + txtInfo.Text;
+
+            Dispatcher.Invoke(() => {
+                txtInfo.Text = text;
+            });
+        }
+
+        private void btnStreamInfo_Click(object sender, RoutedEventArgs e)
+        {
+            string command = String.Format(HDHRConfigCommand.GetStreamInfo.Value, "10183772", "1");
+
+            var result = ExecuteCommand(command);
+
+            UpdateInfoText(result);
+        }
+
+
+        private string ExecuteCommand(string arguments)
+        {
+            var process = new Process();
+            process.StartInfo.FileName = ConfigExecutable;
+            process.StartInfo.Arguments = arguments;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.CreateNoWindow = true;
+            process.Start();
+            string output = process.StandardOutput.ReadToEnd();
+            process.WaitForExit();
+            int exitCode = process.ExitCode;
+            process.Close();
+
+            return output;
+        }
+
+        private void btnLaunch_Click(object sender, RoutedEventArgs e)
+        {
+
+
+            string commandArgs = "10183772 set /tuner1/target rtp://192.168.1.81:5000";
+            ExecuteCommand(commandArgs);
+
+
+
+            var process = new Process();
+            process.StartInfo.FileName = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
+            process.StartInfo.Arguments = "rtp://@192.168.1.81:5000";
+
+            process.Start();
+
+
         }
     }
 }
