@@ -104,8 +104,15 @@ namespace hdhr_vintage
 
             //string commandArgs = "10183772 set /tuner1/target rtp://192.168.1.81:5000";
             //ExecuteCommand(commandArgs);
+            System.Net.Sockets.Socket sock = new System.Net.Sockets.Socket(System.Net.Sockets.AddressFamily.InterNetwork,
+                         System.Net.Sockets.SocketType.Stream, System.Net.Sockets.ProtocolType.Tcp);
+            sock.Bind(new System.Net.IPEndPoint(System.Net.IPAddress.Parse("192.168.1.81"), 0)); // Pass 0 here.
 
-            string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", "192.168.1.81", "5000");
+            var endPoint = (System.Net.IPEndPoint)sock.LocalEndPoint;
+            string port = endPoint.Port.ToString();
+
+
+            string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", "192.168.1.81", port);
             string result = ExecuteCommand(args);
 
             UpdateInfoText(result);
@@ -113,7 +120,7 @@ namespace hdhr_vintage
 
             var process = new Process();
             process.StartInfo.FileName = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
-            process.StartInfo.Arguments = "rtp://@192.168.1.81:5000";
+            process.StartInfo.Arguments = "rtp://@192.168.1.81:" + port;
 
             process.Start();
 
