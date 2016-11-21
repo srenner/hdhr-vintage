@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace hdhr_vintage.Models
 {
-    class Tuner
+    public class Tuner
     {
         public string TunerID { get; set; }
 
