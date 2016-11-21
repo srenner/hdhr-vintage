@@ -93,6 +93,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Channel.cs" />
+    <Compile Include="Models\Device.cs" />
+    <Compile Include="Models\Program.cs" />
+    <Compile Include="Models\Tuner.cs" />
     <Compile Include="NetworkHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
