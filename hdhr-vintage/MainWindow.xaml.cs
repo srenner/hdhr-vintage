@@ -23,7 +23,8 @@ namespace hdhr_vintage
     {
         
         //todo fetch this from the textbox
-        private string ConfigExecutable = "C:\\Program Files\\Silicondust\\HDHomeRun\\hdhomerun_config.exe";
+        private string ConfigExecutable = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
+        private string VideoPlayerExecutable = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
         private string TunerID = "";
 
         public MainWindow()
@@ -73,10 +74,8 @@ namespace hdhr_vintage
 
         private void btnStreamInfo_Click(object sender, RoutedEventArgs e)
         {
-            string command = String.Format(HDHRConfigCommand.GetStreamInfo.Value, "10183772", "1");
-
-            var result = ExecuteCommand(command);
-
+            string args = HDHRConfigCommand.GetStreamInfo("10183772", "1");
+            var result = ExecuteCommand(args);
             UpdateInfoText(result);
         }
 
@@ -115,7 +114,7 @@ namespace hdhr_vintage
 
 
             var process = new Process();
-            process.StartInfo.FileName = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
+            process.StartInfo.FileName = VideoPlayerExecutable;
             process.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
 
             process.Start();
