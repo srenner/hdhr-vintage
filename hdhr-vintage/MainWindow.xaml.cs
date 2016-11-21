@@ -99,27 +99,25 @@ namespace hdhr_vintage
 
         private void btnLaunch_Click(object sender, RoutedEventArgs e)
         {
-
-
-            //string commandArgs = "10183772 set /tuner1/target rtp://192.168.1.81:5000";
-            //ExecuteCommand(commandArgs);
             string ip = NetworkHelper.GetLocalIP();
             int port = NetworkHelper.GetAvailablePort(ip);
-
 
             string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", ip, port.ToString());
             string result = ExecuteCommand(args);
 
             UpdateInfoText(result);
 
-
             var process = new Process();
             process.StartInfo.FileName = VideoPlayerExecutable;
             process.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
-
+            process.EnableRaisingEvents = true;
             process.Start();
+            process.Exited += Process_Exited;
+        }
 
-
+        private void Process_Exited(object sender, EventArgs e)
+        {
+            UpdateStatusBarText("todo shut off stream");
         }
     }
 }
