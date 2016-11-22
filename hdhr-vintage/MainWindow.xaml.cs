@@ -1,4 +1,5 @@
-﻿using System;
+﻿using hdhr_vintage.DataAccess;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -34,6 +35,8 @@ namespace hdhr_vintage
 
         private void btnTunerScan_Click(object sender, RoutedEventArgs e)
         {
+            DatabaseCommand.CreateDatabase();
+
             string discoverCommand = ConfigExecutable + " discover";
             Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff") + " - " + "performing tuner scan");
 
@@ -49,10 +52,9 @@ namespace hdhr_vintage
             int exitCode = proc.ExitCode;
             proc.Close();
 
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff") + " - " + "tuner scan output (exit code " + exitCode + ") - " + output);
+            var device = DatabaseCommand.CreateDevice(output);
 
-            UpdateStatusBarText(output);
-            UpdateInfoText(output);
+            UpdateStatusBarText("Found " + device.DeviceID + " at " + device.IP);
         }
 
         private void UpdateStatusBarText(string text)

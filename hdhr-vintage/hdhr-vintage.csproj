@@ -86,7 +86,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="DataAccess\SQLiteConfiguration.cs" />
+    <Compile Include="DataAccess\DatabaseCommand.cs" />
     <Compile Include="DataAccess\SQLiteContext.cs" />
     <Compile Include="HDHRConfigCommand.cs" />
     <Compile Include="MainWindow.xaml.cs">

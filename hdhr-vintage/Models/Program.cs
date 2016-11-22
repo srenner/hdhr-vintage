@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,9 @@ namespace hdhr_vintage.Models
     /// </summary>
     public class Program
     {
+        
         public string ProgramNumber { get; set; }
+        [Key]
         public string FriendlyChannelNumber { get; set; }
         public string CallSign { get; set; }
 

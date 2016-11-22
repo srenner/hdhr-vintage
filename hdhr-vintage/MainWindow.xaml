@@ -8,18 +8,12 @@
         Title="HDHR Vintage" Height="323" Width="800">
     <Grid>
         <!--TOP SECTION WITH EXECUTABLE-->
-        <Label x:Name="label" Content="hdhomerun__config.exe location:" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="textBox" HorizontalAlignment="Left" Height="23" Margin="194,14,0,0" TextWrapping="Wrap" Text="C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe" VerticalAlignment="Top" Width="405"/>
-        <Button x:Name="btnBrowseExecutable" Content="Browse" HorizontalAlignment="Left" Margin="604,17,0,0" VerticalAlignment="Top" Width="60"/>
-        <Button x:Name="btnSetExecutable" Content="Set" HorizontalAlignment="Left" Margin="669,17,0,0" VerticalAlignment="Top" Width="75"/>
         <!--/TOP SECTION WITH EXECUTABLE-->
 
-        <Separator HorizontalAlignment="Left" Height="8" Margin="10,42,0,0" VerticalAlignment="Top" Width="773"/>
+        <Button x:Name="btnChannelScan" Content="Channel Scan" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="90" IsEnabled="False"/>
+        <Button x:Name="btnTunerScan" Content="Find Tuners" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="btnTunerScan_Click"/>
 
-        <Button x:Name="btnChannelScan" Content="Channel Scan" HorizontalAlignment="Left" Margin="10,75,0,0" VerticalAlignment="Top" Width="90" IsEnabled="False"/>
-        <Button x:Name="btnTunerScan" Content="Find Tuners" HorizontalAlignment="Left" Margin="10,50,0,0" VerticalAlignment="Top" Width="90" Click="btnTunerScan_Click"/>
-
-        <Button x:Name="btnStreamInfo" Content="Stream Info" HorizontalAlignment="Left" Margin="10,100,0,0" VerticalAlignment="Top" Width="90" Click="btnStreamInfo_Click"/>
+        <Button x:Name="btnStreamInfo" Content="Stream Info" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="90" Click="btnStreamInfo_Click"/>
 
 
         <DockPanel MaxHeight="50" VerticalAlignment="Bottom">
@@ -27,8 +21,8 @@
                 <TextBlock Name="statusText" Text="Ready"></TextBlock>
             </StatusBar>
         </DockPanel>
-        <TextBox x:Name="txtInfo" HorizontalAlignment="Left" Height="211" Margin="105,55,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="673" />
-        <Button x:Name="btnLaunch" Content="Watch" HorizontalAlignment="Left" Margin="10,125,0,0" VerticalAlignment="Top" Width="90" Click="btnLaunch_Click"/>
+        <TextBox x:Name="txtInfo" HorizontalAlignment="Left" Height="256" Margin="105,10,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="673" />
+        <Button x:Name="btnLaunch" Content="Watch" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="90" Click="btnLaunch_Click"/>
 
 
     </Grid>
