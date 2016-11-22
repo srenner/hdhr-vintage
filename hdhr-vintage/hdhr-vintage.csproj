@@ -117,6 +117,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="DataModel.cd" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>

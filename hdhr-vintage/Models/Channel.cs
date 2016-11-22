@@ -15,5 +15,9 @@ namespace hdhr_vintage.Models
     {
         [Key]
         public int ChannelNumber { get; set; }
+
+        public int TunerID { get; set; }
+        public Tuner Tuner { get; set; }
+
     }
 }
