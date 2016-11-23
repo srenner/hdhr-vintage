@@ -6,11 +6,31 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace hdhr_vintage.DataAccess
 {
     public static class DatabaseCommand
     {
+
+        public static T CreateEntity<T>(T entity) where T : class
+        {
+            using (var context = new SQLiteContext())
+            {
+                try
+                {
+                    context.Set<T>().Add(entity);
+                    context.SaveChanges();
+                    return entity;
+                }
+                catch(System.Data.Entity.Validation.DbEntityValidationException ex)
+                {
+                    string stop = ex.Message;
+                    throw;
+                }
+                
+            }
+        }
 
         public static void CreateDatabase()
         {
@@ -32,7 +52,11 @@ namespace hdhr_vintage.DataAccess
                 command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();
 
-
+                sql = @"CREATE TABLE `Tuner` (`TunerID`	TEXT NOT NULL, `DeviceID` TEXT NOT NULL, 
+                        PRIMARY KEY(`TunerID`,`DeviceID`),
+	                    FOREIGN KEY(`DeviceID`) REFERENCES Device);";
+                command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
 
                 conn.Close();
             }
@@ -71,7 +95,9 @@ namespace hdhr_vintage.DataAccess
         {
             using (var context = new SQLiteContext())
             {
-                return context.Device.ToList();
+                return context.Device
+                    .Include(i => i.Tuners)
+                    .ToList();
             }
         }
 

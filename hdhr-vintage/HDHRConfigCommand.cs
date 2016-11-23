@@ -6,22 +6,26 @@ using System.Threading.Tasks;
 
 namespace hdhr_vintage
 {
-    public class HDHRConfigCommand
+    public static class HDHRConfigCommand
     {
-        #region enum-style strings
-        public string Value { get; set; }
-        private HDHRConfigCommand(string value) { Value = value; }
-        //public static HDHRConfigCommand GetStreamInfo { get { return new HDHRConfigCommand("{0} get /tuner{1}/streaminfo"); } }
-        #endregion
-
-        public static string GetStreamInfo(string tunerID, string tunerNumber)
+        public static string GetStreamInfo(string deviceID, string tunerNumber)
         {
-            return tunerID + " get /tuner" + tunerNumber + "/streaminfo";
+            return deviceID + " get /tuner" + tunerNumber + "/streaminfo";
         }
 
-        public static string GetBeginStreamCommand(string tunerID, string tunerNumber, string ip, string port)
+        public static string GetBeginStreamCommand(string deviceID, string tunerNumber, string ip, string port)
         {
-            return " " + tunerID + " set /tuner" + tunerNumber + "/target rtp://" + ip + ":" + port;
+            return " " + deviceID + " set /tuner" + tunerNumber + "/target rtp://" + ip + ":" + port;
+        }
+
+        public static string GetHardwareModel(string deviceID)
+        {
+            return " " + deviceID + " get /sys/hwmodel";
+        }
+
+        public static string GetScan(string deviceID, string tunerNumber)
+        {
+            return " " + deviceID + " scan " + tunerNumber;
         }
     }
 }

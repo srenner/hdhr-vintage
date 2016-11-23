@@ -16,5 +16,7 @@ namespace hdhr_vintage.Models
         [Key]
         public string DeviceID { get; set; }
         public string IP { get; set; }
+
+        public ICollection<Tuner> Tuners { get; set; }
     }
 }

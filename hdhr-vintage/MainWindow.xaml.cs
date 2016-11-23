@@ -26,7 +26,6 @@ namespace hdhr_vintage
         //todo fetch this from the textbox
         private string ConfigExecutable = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
         private string VideoPlayerExecutable = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
-        private string TunerID = "";
 
         public MainWindow()
         {
@@ -37,22 +36,27 @@ namespace hdhr_vintage
         {
             DatabaseCommand.CreateDatabase();
 
-            string discoverCommand = ConfigExecutable + " discover";
-            Console.WriteLine(DateTime.Now.ToString("HH:mm:ss.fff") + " - " + "performing tuner scan");
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
 
-            var proc = new Process();
-            proc.StartInfo.FileName = ConfigExecutable;
-            proc.StartInfo.Arguments = "discover";
-            proc.StartInfo.UseShellExecute = false;
-            proc.StartInfo.RedirectStandardOutput = true;
-            proc.StartInfo.CreateNoWindow = true;
-            proc.Start();
-            string output = proc.StandardOutput.ReadToEnd();
-            proc.WaitForExit();
-            int exitCode = proc.ExitCode;
-            proc.Close();
+            string configOutput = service.ExecuteConfigProcess("discover");
 
-            var device = DatabaseCommand.CreateDevice(output);
+            var device = DatabaseCommand.CreateEntity(Service.ParseDevice(configOutput));
+
+            string hardwareModel = service.ExecuteConfigProcess(HDHRConfigCommand.GetHardwareModel(device.DeviceID));
+
+            int tunerCount = Service.GetTunerCount(hardwareModel);
+
+            for(int i = 0; i < tunerCount; i++)
+            {
+                var tuner = new Models.Tuner();
+                tuner.DeviceID = device.DeviceID;
+                tuner.TunerID = i.ToString();
+                DatabaseCommand.CreateEntity(tuner);
+            }
+
+            
+
+            var devices = DatabaseCommand.GetDevices();
 
             UpdateStatusBarText("Found " + device.DeviceID + " at " + device.IP);
         }
@@ -77,26 +81,10 @@ namespace hdhr_vintage
         private void btnStreamInfo_Click(object sender, RoutedEventArgs e)
         {
             string args = HDHRConfigCommand.GetStreamInfo("10183772", "1");
-            var result = ExecuteCommand(args);
+            //var result = ExecuteCommand(args);
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
+            var result = service.ExecuteConfigProcess(args);
             UpdateInfoText(result);
-        }
-
-
-        private string ExecuteCommand(string arguments)
-        {
-            var process = new Process();
-            process.StartInfo.FileName = ConfigExecutable;
-            process.StartInfo.Arguments = arguments;
-            process.StartInfo.UseShellExecute = false;
-            process.StartInfo.RedirectStandardOutput = true;
-            process.StartInfo.CreateNoWindow = true;
-            process.Start();
-            string output = process.StandardOutput.ReadToEnd();
-            process.WaitForExit();
-            int exitCode = process.ExitCode;
-            process.Close();
-
-            return output;
         }
 
         private void btnLaunch_Click(object sender, RoutedEventArgs e)
@@ -105,7 +93,10 @@ namespace hdhr_vintage
             int port = NetworkHelper.GetAvailablePort(ip);
 
             string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", ip, port.ToString());
-            string result = ExecuteCommand(args);
+
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
+
+            string result = service.ExecuteConfigProcess(args);
 
             UpdateInfoText(result);
 
@@ -120,6 +111,16 @@ namespace hdhr_vintage
         private void Process_Exited(object sender, EventArgs e)
         {
             UpdateStatusBarText("todo shut off stream");
+        }
+
+        private void btnChannelScan_Click(object sender, RoutedEventArgs e)
+        {
+            string args = HDHRConfigCommand.GetScan(DatabaseCommand.GetDevices()[0].DeviceID, "1");
+
+            var svc = new Service(ConfigExecutable, VideoPlayerExecutable);
+            string output = svc.ExecuteConfigProcess(args);
+
+            UpdateInfoText(output);
         }
     }
 }

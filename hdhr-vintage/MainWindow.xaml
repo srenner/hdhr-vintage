@@ -10,7 +10,7 @@
         <!--TOP SECTION WITH EXECUTABLE-->
         <!--/TOP SECTION WITH EXECUTABLE-->
 
-        <Button x:Name="btnChannelScan" Content="Channel Scan" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="90" IsEnabled="False"/>
+        <Button x:Name="btnChannelScan" Content="Channel Scan" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="90" Click="btnChannelScan_Click" />
         <Button x:Name="btnTunerScan" Content="Find Tuners" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="90" Click="btnTunerScan_Click"/>
 
         <Button x:Name="btnStreamInfo" Content="Stream Info" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="90" Click="btnStreamInfo_Click"/>

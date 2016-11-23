@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace hdhr_vintage
 {
-    public class NetworkHelper
+    public static class NetworkHelper
     {
         public static string GetLocalIP()
         {
