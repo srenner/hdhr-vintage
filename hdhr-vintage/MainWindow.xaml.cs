@@ -71,7 +71,7 @@ namespace hdhr_vintage
 
         private void UpdateInfoText(string text)
         {
-            text = text.Trim() + "\r\n==========\r\n" + txtInfo.Text;
+            //text = text.Trim() + "\r\n==========\r\n" + txtInfo.Text;
 
             Dispatcher.Invoke(() => {
                 txtInfo.Text = text;
@@ -117,10 +117,36 @@ namespace hdhr_vintage
         {
             string args = HDHRConfigCommand.GetScan(DatabaseCommand.GetDevices()[0].DeviceID, "1");
 
-            var svc = new Service(ConfigExecutable, VideoPlayerExecutable);
-            string output = svc.ExecuteConfigProcess(args);
 
-            UpdateInfoText(output);
+            Task.Factory.StartNew(() => {
+
+                var proc = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = ConfigExecutable,
+                        Arguments = args,
+                        UseShellExecute = false,
+                        RedirectStandardOutput = true,
+                        CreateNoWindow = true
+                    }
+                };
+
+            proc.Start();
+            while (!proc.StandardOutput.EndOfStream)
+            {
+                string line = proc.StandardOutput.ReadLine();
+                UpdateInfoText(line);
+            }
+
+        });
+
+
+
+            //var svc = new Service(ConfigExecutable, VideoPlayerExecutable);
+            //string output = svc.ExecuteConfigProcess(args);
+
+           //UpdateInfoText(output);
         }
     }
 }
