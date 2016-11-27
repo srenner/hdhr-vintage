@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,8 +74,10 @@ namespace hdhr_vintage
         {
             //text = text.Trim() + "\r\n==========\r\n" + txtInfo.Text;
 
+            string newText = text + "\r\n==========\r\n";
+
             Dispatcher.Invoke(() => {
-                txtInfo.Text = text;
+                txtInfo.Text = newText + txtInfo.Text;
             });
         }
 
@@ -116,37 +119,18 @@ namespace hdhr_vintage
         private void btnChannelScan_Click(object sender, RoutedEventArgs e)
         {
             string args = HDHRConfigCommand.GetScan(DatabaseCommand.GetDevices()[0].DeviceID, "1");
-
-
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
+            StreamReader scanStream = service.ExecuteConfigStream(args);
+            UpdateStatusBarText("Performing channel scan");
             Task.Factory.StartNew(() => {
 
-                var proc = new Process
+                while(!scanStream.EndOfStream)
                 {
-                    StartInfo = new ProcessStartInfo
-                    {
-                        FileName = ConfigExecutable,
-                        Arguments = args,
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true
-                    }
-                };
-
-            proc.Start();
-            while (!proc.StandardOutput.EndOfStream)
-            {
-                string line = proc.StandardOutput.ReadLine();
-                UpdateInfoText(line);
-            }
-
-        });
-
-
-
-            //var svc = new Service(ConfigExecutable, VideoPlayerExecutable);
-            //string output = svc.ExecuteConfigProcess(args);
-
-           //UpdateInfoText(output);
+                    string line = scanStream.ReadLine();
+                    UpdateInfoText(line);
+                }
+                UpdateStatusBarText("Channel scan complete");
+            });
         }
     }
 }

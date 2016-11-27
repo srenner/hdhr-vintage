@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using hdhr_vintage.Models;
+using System.IO;
 
 namespace hdhr_vintage
 {
@@ -34,6 +35,25 @@ namespace hdhr_vintage
             proc.Close();
 
             return output;
+        }
+
+        public StreamReader ExecuteConfigStream(string args)
+        {
+            var proc = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = ConfigPath,
+                    Arguments = args,
+                    UseShellExecute = false,
+                    RedirectStandardOutput = true,
+                    CreateNoWindow = true
+                }
+            };
+
+            proc.Start();
+
+            return proc.StandardOutput;
         }
 
         public static Device ParseDevice(string unparsedText)
