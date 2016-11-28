@@ -116,21 +116,31 @@ namespace hdhr_vintage
             UpdateStatusBarText("todo shut off stream");
         }
 
-        private void btnChannelScan_Click(object sender, RoutedEventArgs e)
+        private async void btnChannelScan_Click(object sender, RoutedEventArgs e)
         {
             string args = HDHRConfigCommand.GetScan(DatabaseCommand.GetDevices()[0].DeviceID, "1");
             var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-            StreamReader scanStream = service.ExecuteConfigStream(args);
-            UpdateStatusBarText("Performing channel scan");
-            Task.Factory.StartNew(() => {
+            var scanStream = service.ExecuteConfigStream(args);
 
-                while(!scanStream.EndOfStream)
+            var sbStreamText = new StringBuilder();
+
+            if (scanStream != null)
+            {
+                UpdateStatusBarText("Performing channel scan");
+                await Task.Factory.StartNew(() =>
                 {
-                    string line = scanStream.ReadLine();
-                    UpdateInfoText(line);
-                }
-                UpdateStatusBarText("Channel scan complete");
-            });
+
+                    while (!scanStream.EndOfStream)
+                    {
+                        string line = scanStream.ReadLine();
+                        sbStreamText.AppendLine(line);
+                        UpdateInfoText(line);
+                    }
+                    UpdateStatusBarText("Channel scan complete");
+                });
+            }
+
+            service.ParseChannelScan(sbStreamText.ToString());
         }
     }
 }

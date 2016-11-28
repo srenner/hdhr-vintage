@@ -50,11 +50,15 @@ namespace hdhr_vintage
                     CreateNoWindow = true
                 }
             };
-
             proc.Start();
-
             return proc.StandardOutput;
         }
+
+        public void ParseChannelScan(string scanOutput)
+        {
+            throw new NotImplementedException("todo");
+        }
+
 
         public static Device ParseDevice(string unparsedText)
         {
