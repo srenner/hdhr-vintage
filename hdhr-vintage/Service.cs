@@ -54,9 +54,42 @@ namespace hdhr_vintage
             return proc.StandardOutput;
         }
 
-        public void ParseChannelScan(string scanOutput)
+        public void ParseChannelScan(string scanOutput, Tuner tuner)
         {
-            throw new NotImplementedException("todo");
+            string[] lines = scanOutput.Split('\n');
+            Channel channel = new Channel();
+            foreach (string line in lines)
+            {
+                if (line.Contains(tuner.ChannelMap + ":"))
+                {
+                    channel = new Channel
+                    {
+                        ChannelNumber = int.Parse(line.Substring(line.IndexOf(tuner.ChannelMap) + tuner.ChannelMap.Length + 1).Trim().TrimEnd(')')),
+                        TunerID = tuner.TunerID
+                    };
+                }
+
+                if (line.ToUpper().StartsWith("PROGRAM"))
+                {
+                    if(channel.ChannelNumber > 0)
+                    {
+                        var program = new Program();
+                        //program.Channel = channel;
+                        program.ChannelNumber = channel.ChannelNumber;
+
+                        string[] programComponents = line.Split(' ');
+
+                        program.ProgramNumber = programComponents[1].TrimEnd(':');
+                        program.FriendlyChannelNumber = programComponents[2];
+                        program.CallSign = programComponents[3].TrimEnd('\r');
+                    }
+                    
+                }
+
+            }
+
+
+            //throw new NotImplementedException("todo");
         }
 
 

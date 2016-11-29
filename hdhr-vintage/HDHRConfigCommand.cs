@@ -23,7 +23,7 @@ namespace hdhr_vintage
             return " " + deviceID + " get /sys/hwmodel";
         }
 
-        public static string GetScan(string deviceID, string tunerNumber)
+        public static string GetScan(string deviceID, int tunerNumber)
         {
             return " " + deviceID + " scan " + tunerNumber;
         }

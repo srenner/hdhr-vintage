@@ -49,9 +49,11 @@ namespace hdhr_vintage
 
             for(int i = 0; i < tunerCount; i++)
             {
+                //todo get real channelmap
                 var tuner = new Models.Tuner();
                 tuner.DeviceID = device.DeviceID;
-                tuner.TunerID = i.ToString();
+                tuner.TunerID = i;
+                tuner.ChannelMap = "us-bcast"; //temporary
                 DatabaseCommand.CreateEntity(tuner);
             }
 
@@ -118,7 +120,15 @@ namespace hdhr_vintage
 
         private async void btnChannelScan_Click(object sender, RoutedEventArgs e)
         {
-            string args = HDHRConfigCommand.GetScan(DatabaseCommand.GetDevices()[0].DeviceID, "1");
+            //temporary
+            Models.Tuner tuner = new Models.Tuner();
+            tuner.Device = DatabaseCommand.GetDevices()[0];
+            tuner.DeviceID = tuner.Device.DeviceID;
+            tuner.ChannelMap = "us-bcast";
+            tuner.TunerID = 1;
+
+
+            string args = HDHRConfigCommand.GetScan(tuner.DeviceID, tuner.TunerID);
             var service = new Service(ConfigExecutable, VideoPlayerExecutable);
             var scanStream = service.ExecuteConfigStream(args);
 
@@ -126,21 +136,30 @@ namespace hdhr_vintage
 
             if (scanStream != null)
             {
-                UpdateStatusBarText("Performing channel scan");
+                int programCount = 0;
+                string channelScanBaseText = "Performing channel scan";
+                UpdateStatusBarText(channelScanBaseText);
                 await Task.Factory.StartNew(() =>
                 {
 
                     while (!scanStream.EndOfStream)
                     {
                         string line = scanStream.ReadLine();
+                        if(line.ToUpper().StartsWith("PROGRAM"))
+                        {
+                            programCount++;
+                            UpdateStatusBarText(channelScanBaseText + " (found " + programCount + ")");
+                        }
                         sbStreamText.AppendLine(line);
                         UpdateInfoText(line);
                     }
-                    UpdateStatusBarText("Channel scan complete");
+                    UpdateStatusBarText("Channel scan complete (found " + programCount + ")");
                 });
             }
 
-            service.ParseChannelScan(sbStreamText.ToString());
+
+
+            service.ParseChannelScan(sbStreamText.ToString(), tuner);
         }
     }
 }

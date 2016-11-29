@@ -52,7 +52,7 @@ namespace hdhr_vintage.DataAccess
                 command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();
 
-                sql = @"CREATE TABLE `Tuner` (`TunerID`	TEXT NOT NULL, `DeviceID` TEXT NOT NULL, 
+                sql = @"CREATE TABLE `Tuner` (`TunerID`	INT NOT NULL, `DeviceID` TEXT NOT NULL, 'ChannelMap' TEXT NOT NULL,
                         PRIMARY KEY(`TunerID`,`DeviceID`),
 	                    FOREIGN KEY(`DeviceID`) REFERENCES Device);";
                 command = new SQLiteCommand(sql, conn);
