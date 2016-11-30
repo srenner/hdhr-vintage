@@ -142,7 +142,11 @@ namespace hdhr_vintage.DataAccess
                 var programs = new List<Program>();
                 channels.ForEach(x => programs.AddRange(x.Programs));
 
-                return programs.OrderBy(o => o.FriendlyChannelNumber).ToList();
+                return programs
+                    .OrderBy(o => o.FriendlyChannelMain)
+                    .ThenBy(o => o.FriendlyChannelSub)
+                    .ThenBy(o => o.FriendlyChannelNumber)
+                    .ToList();
             }
         }
     }
