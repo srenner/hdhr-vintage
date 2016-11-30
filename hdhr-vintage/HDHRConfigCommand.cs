@@ -18,6 +18,11 @@ namespace hdhr_vintage
             return " " + deviceID + " set /tuner" + tunerNumber + "/target rtp://" + ip + ":" + port;
         }
 
+        public static string GetEndStreamCommand(string deviceID, string tunerNumber)
+        {
+            return " " + deviceID + " set /tuner" + tunerNumber + "/target none";
+        }
+
         public static string GetHardwareModel(string deviceID)
         {
             return " " + deviceID + " get /sys/hwmodel";

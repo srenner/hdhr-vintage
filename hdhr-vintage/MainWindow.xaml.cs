@@ -115,7 +115,9 @@ namespace hdhr_vintage
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            UpdateStatusBarText("todo shut off stream");
+            string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
+            string result = service.ExecuteConfigProcess(args);
         }
 
         private async void btnChannelScan_Click(object sender, RoutedEventArgs e)
