@@ -52,7 +52,7 @@ namespace hdhr_vintage
                 //todo get real channelmap
                 var tuner = new Models.Tuner();
                 tuner.DeviceID = device.DeviceID;
-                tuner.TunerID = i;
+                tuner.TunerNumber = i;
                 tuner.ChannelMap = "us-bcast"; //temporary
                 DatabaseCommand.CreateEntity(tuner);
             }
@@ -121,14 +121,10 @@ namespace hdhr_vintage
         private async void btnChannelScan_Click(object sender, RoutedEventArgs e)
         {
             //temporary
-            Models.Tuner tuner = new Models.Tuner();
-            tuner.Device = DatabaseCommand.GetDevices()[0];
-            tuner.DeviceID = tuner.Device.DeviceID;
-            tuner.ChannelMap = "us-bcast";
-            tuner.TunerID = 1;
+            var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
 
 
-            string args = HDHRConfigCommand.GetScan(tuner.DeviceID, tuner.TunerID);
+            string args = HDHRConfigCommand.GetScan(tuner.DeviceID, tuner.TunerNumber);
             var service = new Service(ConfigExecutable, VideoPlayerExecutable);
             var scanStream = service.ExecuteConfigStream(args);
 
@@ -160,6 +156,16 @@ namespace hdhr_vintage
 
 
             service.ParseChannelScan(sbStreamText.ToString(), tuner);
+        }
+
+        private void btnPrograms_Click(object sender, RoutedEventArgs e)
+        {
+            //temporary
+            var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
+
+            var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
+
+            string breakpoint = "stop here";
         }
     }
 }

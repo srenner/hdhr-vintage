@@ -67,6 +67,7 @@ namespace hdhr_vintage
                         ChannelNumber = int.Parse(line.Substring(line.IndexOf(tuner.ChannelMap) + tuner.ChannelMap.Length + 1).Trim().TrimEnd(')')),
                         TunerID = tuner.TunerID
                     };
+                    channel = DataAccess.DatabaseCommand.CreateEntity(channel);
                 }
 
                 if (line.ToUpper().StartsWith("PROGRAM"))
@@ -75,13 +76,15 @@ namespace hdhr_vintage
                     {
                         var program = new Program();
                         //program.Channel = channel;
-                        program.ChannelNumber = channel.ChannelNumber;
+                        program.ChannelID = channel.ChannelID;
 
                         string[] programComponents = line.Split(' ');
 
                         program.ProgramNumber = programComponents[1].TrimEnd(':');
                         program.FriendlyChannelNumber = programComponents[2];
                         program.CallSign = programComponents[3].TrimEnd('\r');
+
+                        program = DataAccess.DatabaseCommand.CreateEntity(program);
                     }
                     
                 }

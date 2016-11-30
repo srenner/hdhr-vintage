@@ -23,6 +23,7 @@
         </DockPanel>
         <TextBox x:Name="txtInfo" HorizontalAlignment="Left" Height="256" Margin="105,10,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="673" />
         <Button x:Name="btnLaunch" Content="Watch" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="90" Click="btnLaunch_Click"/>
+        <Button x:Name="btnPrograms" Content="Get Programs" HorizontalAlignment="Left" Margin="10,109,0,0" VerticalAlignment="Top" Width="90" Click="btnPrograms_Click"/>
 
 
     </Grid>

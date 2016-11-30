@@ -10,13 +10,14 @@ namespace hdhr_vintage.Models
 {
     public class Tuner
     {
-        [Key, Column(Order = 0)]
         public int TunerID { get; set; }
+        public int TunerNumber { get; set; }
 
-        [Key, Column(Order = 1)]
         public string DeviceID { get; set; }
         public Device Device { get; set; }
 
         public string ChannelMap { get; set; }
+
+        public ICollection<Channel> Channels { get; set; }
     }
 }

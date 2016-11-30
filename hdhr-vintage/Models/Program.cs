@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +14,35 @@ namespace hdhr_vintage.Models
     /// </summary>
     public class Program
     {
-        
+        public int ProgramID { get; set; }
         public string ProgramNumber { get; set; }
-        [Key]
         public string FriendlyChannelNumber { get; set; }
         public string CallSign { get; set; }
 
-        public int ChannelNumber { get; set; }
+        public int ChannelID { get; set; }
         public Channel Channel { get; set; }
+
+        [NotMapped]
+        public int FriendlyChannelMain
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        [NotMapped]
+        public int FriendlyChannelSub
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        public override string ToString()
+        {
+            return FriendlyChannelNumber;
+        }
     }
 }

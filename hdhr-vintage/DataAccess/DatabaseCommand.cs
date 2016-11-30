@@ -52,9 +52,19 @@ namespace hdhr_vintage.DataAccess
                 command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();
 
-                sql = @"CREATE TABLE `Tuner` (`TunerID`	INT NOT NULL, `DeviceID` TEXT NOT NULL, 'ChannelMap' TEXT NOT NULL,
-                        PRIMARY KEY(`TunerID`,`DeviceID`),
+                sql = @"CREATE TABLE `Tuner` (`TunerID`	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `TunerNumber` INTEGER NOT NULL, `DeviceID` TEXT NOT NULL, 'ChannelMap' TEXT NOT NULL,
 	                    FOREIGN KEY(`DeviceID`) REFERENCES Device);";
+                command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+
+                sql = @"CREATE TABLE `Channel` (`ChannelID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `ChannelNumber` INT NOT NULL, `TunerID` INT NOT NULL,
+	                    FOREIGN KEY(`TunerID`) REFERENCES Tuner);";
+                command = new SQLiteCommand(sql, conn);
+                command.ExecuteNonQuery();
+
+                sql = @"CREATE TABLE `Program` (`ProgramID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `ProgramNumber` TEXT NOT NULL, 
+                        `FriendlyChannelNumber` TEXT NOT NULL, `CallSign` TEXT NULL, `ChannelID` INT NOT NULL,
+	                    FOREIGN KEY(`ChannelID`) REFERENCES Channel);";
                 command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();
 
@@ -101,5 +111,39 @@ namespace hdhr_vintage.DataAccess
             }
         }
 
+        public static List<Tuner> GetTuners()
+        {
+            using (var context = new SQLiteContext())
+            {
+                return context.Tuner.ToList();
+            }
+        }
+
+        public static Tuner GetTuner(string deviceID, int tunerNumber)
+        {
+            using (var context = new SQLiteContext())
+            {
+                return context.Tuner
+                    .Where(w => w.DeviceID == deviceID)
+                    .Where(w => w.TunerNumber == tunerNumber)
+                    .FirstOrDefault();
+            }
+        }
+
+        public static List<Program> GetPrograms(int tunerID)
+        {
+            using (var context = new SQLiteContext())
+            {
+                var channels = context.Channel
+                    .Include(i => i.Programs)
+                    .Where(w => w.TunerID == tunerID)
+                    .ToList();
+
+                var programs = new List<Program>();
+                channels.ForEach(x => programs.AddRange(x.Programs));
+
+                return programs.OrderBy(o => o.FriendlyChannelNumber).ToList();
+            }
+        }
     }
 }
