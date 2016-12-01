@@ -23,6 +23,16 @@ namespace hdhr_vintage
             return " " + deviceID + " set /tuner" + tunerNumber + "/target none";
         }
 
+        public static string GetSetChannelCommand(string deviceID, string tunerNumber, string channelNumber)
+        {
+            return " " + deviceID + " set /tuner" + tunerNumber + "/channel " + channelNumber;
+        }
+
+        public static string GetSetProgramCommand(string deviceID, string tunerNumber, string programNumber)
+        {
+            return " " + deviceID + " set /tuner" + tunerNumber + "/program " + programNumber;
+        }
+
         public static string GetHardwareModel(string deviceID)
         {
             return " " + deviceID + " get /sys/hwmodel";

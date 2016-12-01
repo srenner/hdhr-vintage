@@ -1,10 +1,12 @@
 ﻿using hdhr_vintage.DataAccess;
+using hdhr_vintage.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +29,8 @@ namespace hdhr_vintage
         //todo fetch this from the textbox
         private string ConfigExecutable = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
         private string VideoPlayerExecutable = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
+
+        private Process ActiveSession;
 
         public MainWindow()
         {
@@ -167,7 +171,51 @@ namespace hdhr_vintage
 
             var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
 
-            string breakpoint = "stop here";
+
+            gridPrograms.ItemsSource = programs;
+
+        }
+
+        private void btnWatch_Click(object sender, RoutedEventArgs e)
+        {
+            if (ActiveSession != null && !ActiveSession.HasExited)
+            {
+                ActiveSession.Kill();
+            }
+
+            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
+
+            Button btn = (Button)sender;
+            Program program = (Program)btn.DataContext;
+
+
+
+
+            string channelArgs = HDHRConfigCommand.GetSetChannelCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.Channel.ChannelNumber.ToString());
+            string channelResult = service.ExecuteConfigProcess(channelArgs);
+
+            string programArgs = HDHRConfigCommand.GetSetProgramCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.ProgramNumber);
+            string programResult = service.ExecuteConfigProcess(programArgs);
+
+
+            //if (ActiveSession == null || ActiveSession.HasExited)
+            {
+                string ip = NetworkHelper.GetLocalIP();
+                int port = NetworkHelper.GetAvailablePort(ip);
+                string streamArgs = HDHRConfigCommand.GetBeginStreamCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), ip, port.ToString());
+                string result = service.ExecuteConfigProcess(streamArgs);
+
+                UpdateInfoText(result);
+
+                ActiveSession = new Process();
+                ActiveSession.StartInfo.FileName = VideoPlayerExecutable;
+                ActiveSession.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
+                ActiveSession.EnableRaisingEvents = true;
+                ActiveSession.Start();
+                ActiveSession.Exited += Process_Exited;
+            }
+
+            
         }
     }
 }

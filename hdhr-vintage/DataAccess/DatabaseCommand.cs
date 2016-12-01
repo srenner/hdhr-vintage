@@ -136,6 +136,7 @@ namespace hdhr_vintage.DataAccess
             {
                 var channels = context.Channel
                     .Include(i => i.Programs)
+                    .Include(i => i.Tuner)
                     .Where(w => w.TunerID == tunerID)
                     .ToList();
 

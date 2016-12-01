@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:hdhr_vintage"
         mc:Ignorable="d"
-        Title="HDHR Vintage" Height="323" Width="800">
-    <Grid>
+        Title="HDHR Vintage" Height="400" Width="600">
+    <Grid Margin="0,1,0.333,-0.667">
         <!--TOP SECTION WITH EXECUTABLE-->
         <!--/TOP SECTION WITH EXECUTABLE-->
 
@@ -16,15 +16,33 @@
         <Button x:Name="btnStreamInfo" Content="Stream Info" HorizontalAlignment="Left" Margin="10,59,0,0" VerticalAlignment="Top" Width="90" Click="btnStreamInfo_Click"/>
 
 
+
+        <TextBox x:Name="txtInfo" HorizontalAlignment="Left" Height="131" Margin="10,135,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="90" />
+        <Button x:Name="btnLaunch" Content="Watch" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="90" Click="btnLaunch_Click"/>
+        <Button x:Name="btnPrograms" Content="Get Programs" HorizontalAlignment="Left" Margin="10,109,0,0" VerticalAlignment="Top" Width="90" Click="btnPrograms_Click"/>
+
         <DockPanel MaxHeight="50" VerticalAlignment="Bottom">
             <StatusBar DockPanel.Dock="Bottom">
                 <TextBlock Name="statusText" Text="Ready"></TextBlock>
             </StatusBar>
         </DockPanel>
-        <TextBox x:Name="txtInfo" HorizontalAlignment="Left" Height="256" Margin="105,10,0,0" TextWrapping="Wrap" Text="" IsReadOnly="True" VerticalAlignment="Top" Width="673" />
-        <Button x:Name="btnLaunch" Content="Watch" HorizontalAlignment="Left" Margin="10,84,0,0" VerticalAlignment="Top" Width="90" Click="btnLaunch_Click"/>
-        <Button x:Name="btnPrograms" Content="Get Programs" HorizontalAlignment="Left" Margin="10,109,0,0" VerticalAlignment="Top" Width="90" Click="btnPrograms_Click"/>
+        <DataGrid x:Name="gridPrograms" AutoGenerateColumns="False" HorizontalAlignment="Left" Height="334" Margin="105,10,0,0" VerticalAlignment="Top" Width="478">
 
+            <DataGrid.Columns>
+
+                <DataGridTextColumn Binding="{Binding FriendlyChannelNumber}" Header="Channel">
+                </DataGridTextColumn>
+
+                <DataGridTemplateColumn>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="Watch" Click="btnWatch_Click"></Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+            
+        </DataGrid>
 
     </Grid>
 
