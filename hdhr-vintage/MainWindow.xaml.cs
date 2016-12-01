@@ -180,7 +180,8 @@ namespace hdhr_vintage
         {
             if (ActiveSession != null && !ActiveSession.HasExited)
             {
-                ActiveSession.Kill();
+                //ActiveSession.Kill();
+                ActiveSession.CloseMainWindow();
             }
 
             var service = new Service(ConfigExecutable, VideoPlayerExecutable);
