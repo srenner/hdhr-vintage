@@ -25,16 +25,15 @@ namespace hdhr_vintage
     /// </summary>
     public partial class MainWindow : Window
     {
-        
-        //todo fetch this from the textbox
-        private string ConfigExecutable = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
-        private string VideoPlayerExecutable = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
-
-        private Process ActiveSession;
+        private Process _activeSession;
+        private Service _service;
 
         public MainWindow()
         {
             InitializeComponent();
+
+            //todo make paths configurable
+            _service = new Service(@"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe", @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe");
 
             //todo this will break if the database is empty
             var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
@@ -46,13 +45,11 @@ namespace hdhr_vintage
         {
             DatabaseCommand.CreateDatabase();
 
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-
-            string configOutput = service.ExecuteConfigProcess("discover");
+            string configOutput = _service.ExecuteConfigProcess("discover");
 
             var device = DatabaseCommand.CreateEntity(Service.ParseDevice(configOutput));
 
-            string hardwareModel = service.ExecuteConfigProcess(HDHRConfigCommand.GetHardwareModel(device.DeviceID));
+            string hardwareModel = _service.ExecuteConfigProcess(HDHRConfigCommand.GetHardwareModel(device.DeviceID));
 
             int tunerCount = Service.GetTunerCount(hardwareModel);
 
@@ -83,9 +80,8 @@ namespace hdhr_vintage
 
         private void UpdateInfoText(string text)
         {
-            //text = text.Trim() + "\r\n==========\r\n" + txtInfo.Text;
 
-            string newText = text + "\r\n==========\r\n";
+            string newText = text + System.Environment.NewLine;
 
             Dispatcher.Invoke(() => {
                 txtInfo.Text = newText + txtInfo.Text;
@@ -95,28 +91,23 @@ namespace hdhr_vintage
         private void btnStreamInfo_Click(object sender, RoutedEventArgs e)
         {
             string args = HDHRConfigCommand.GetStreamInfo("10183772", "1");
-            //var result = ExecuteCommand(args);
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-            var result = service.ExecuteConfigProcess(args);
+            var result = _service.ExecuteConfigProcess(args);
             UpdateInfoText(result);
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
             string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-            string result = service.ExecuteConfigProcess(args);
+            string result = _service.ExecuteConfigProcess(args);
         }
 
         private async void btnChannelScan_Click(object sender, RoutedEventArgs e)
         {
-            //temporary
+            //todo fix this
             var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
 
-
             string args = HDHRConfigCommand.GetScan(tuner.DeviceID, tuner.TunerNumber);
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-            var scanStream = service.ExecuteConfigStream(args);
+            var scanStream = _service.ExecuteConfigStream(args);
 
             var sbStreamText = new StringBuilder();
 
@@ -143,9 +134,7 @@ namespace hdhr_vintage
                 });
             }
 
-
-
-            service.ParseChannelScan(sbStreamText.ToString(), tuner);
+            _service.ParseChannelScan(sbStreamText.ToString(), tuner);
         }
 
         private void btnPrograms_Click(object sender, RoutedEventArgs e)
@@ -159,35 +148,34 @@ namespace hdhr_vintage
 
         private void btnWatch_Click(object sender, RoutedEventArgs e)
         {
-            if (ActiveSession != null && !ActiveSession.HasExited)
+            if (_activeSession != null && !_activeSession.HasExited)
             {
-                ActiveSession.CloseMainWindow();
+                _activeSession.CloseMainWindow();
             }
 
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
 
             Button btn = (Button)sender;
             Program program = (Program)btn.DataContext;
 
             string channelArgs = HDHRConfigCommand.GetSetChannelCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.Channel.ChannelNumber.ToString());
-            string channelResult = service.ExecuteConfigProcess(channelArgs);
+            string channelResult = _service.ExecuteConfigProcess(channelArgs);
 
             string programArgs = HDHRConfigCommand.GetSetProgramCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.ProgramNumber);
-            string programResult = service.ExecuteConfigProcess(programArgs);
+            string programResult = _service.ExecuteConfigProcess(programArgs);
 
             string ip = NetworkHelper.GetLocalIP();
             int port = NetworkHelper.GetAvailablePort(ip);
             string streamArgs = HDHRConfigCommand.GetBeginStreamCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), ip, port.ToString());
-            string result = service.ExecuteConfigProcess(streamArgs);
+            string result = _service.ExecuteConfigProcess(streamArgs);
 
             UpdateInfoText(result);
 
-            ActiveSession = new Process();
-            ActiveSession.StartInfo.FileName = VideoPlayerExecutable;
-            ActiveSession.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
-            ActiveSession.EnableRaisingEvents = true;
-            ActiveSession.Start();
-            ActiveSession.Exited += Process_Exited;
+            _activeSession = new Process();
+            _activeSession.StartInfo.FileName = _service.VideoPlayerPath;
+            _activeSession.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
+            _activeSession.EnableRaisingEvents = true;
+            _activeSession.Start();
+            _activeSession.Exited += Process_Exited;
         }
     }
 }

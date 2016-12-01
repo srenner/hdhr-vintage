@@ -11,8 +11,8 @@ namespace hdhr_vintage
 {
     public class Service
     {
-        private string ConfigPath = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
-        private string VideoPlayerPath = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
+        public string ConfigPath = @"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe";
+        public string VideoPlayerPath = @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe";
 
         public Service(string configPath, string videoPlayerPath)
         {
