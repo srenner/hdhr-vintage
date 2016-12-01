@@ -35,6 +35,11 @@ namespace hdhr_vintage
         public MainWindow()
         {
             InitializeComponent();
+
+            //todo this will break if the database is empty
+            var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
+            var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
+            gridPrograms.ItemsSource = programs;
         }
 
         private void btnTunerScan_Click(object sender, RoutedEventArgs e)
@@ -96,27 +101,6 @@ namespace hdhr_vintage
             UpdateInfoText(result);
         }
 
-        private void btnLaunch_Click(object sender, RoutedEventArgs e)
-        {
-            string ip = NetworkHelper.GetLocalIP();
-            int port = NetworkHelper.GetAvailablePort(ip);
-
-            string args = HDHRConfigCommand.GetBeginStreamCommand("10183772", "1", ip, port.ToString());
-
-            var service = new Service(ConfigExecutable, VideoPlayerExecutable);
-
-            string result = service.ExecuteConfigProcess(args);
-
-            UpdateInfoText(result);
-
-            var process = new Process();
-            process.StartInfo.FileName = VideoPlayerExecutable;
-            process.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
-            process.EnableRaisingEvents = true;
-            process.Start();
-            process.Exited += Process_Exited;
-        }
-
         private void Process_Exited(object sender, EventArgs e)
         {
             string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
@@ -170,17 +154,13 @@ namespace hdhr_vintage
             var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
 
             var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
-
-
             gridPrograms.ItemsSource = programs;
-
         }
 
         private void btnWatch_Click(object sender, RoutedEventArgs e)
         {
             if (ActiveSession != null && !ActiveSession.HasExited)
             {
-                //ActiveSession.Kill();
                 ActiveSession.CloseMainWindow();
             }
 
@@ -189,34 +169,25 @@ namespace hdhr_vintage
             Button btn = (Button)sender;
             Program program = (Program)btn.DataContext;
 
-
-
-
             string channelArgs = HDHRConfigCommand.GetSetChannelCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.Channel.ChannelNumber.ToString());
             string channelResult = service.ExecuteConfigProcess(channelArgs);
 
             string programArgs = HDHRConfigCommand.GetSetProgramCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), program.ProgramNumber);
             string programResult = service.ExecuteConfigProcess(programArgs);
 
+            string ip = NetworkHelper.GetLocalIP();
+            int port = NetworkHelper.GetAvailablePort(ip);
+            string streamArgs = HDHRConfigCommand.GetBeginStreamCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), ip, port.ToString());
+            string result = service.ExecuteConfigProcess(streamArgs);
 
-            //if (ActiveSession == null || ActiveSession.HasExited)
-            {
-                string ip = NetworkHelper.GetLocalIP();
-                int port = NetworkHelper.GetAvailablePort(ip);
-                string streamArgs = HDHRConfigCommand.GetBeginStreamCommand(program.Channel.Tuner.DeviceID, program.Channel.Tuner.TunerNumber.ToString(), ip, port.ToString());
-                string result = service.ExecuteConfigProcess(streamArgs);
+            UpdateInfoText(result);
 
-                UpdateInfoText(result);
-
-                ActiveSession = new Process();
-                ActiveSession.StartInfo.FileName = VideoPlayerExecutable;
-                ActiveSession.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
-                ActiveSession.EnableRaisingEvents = true;
-                ActiveSession.Start();
-                ActiveSession.Exited += Process_Exited;
-            }
-
-            
+            ActiveSession = new Process();
+            ActiveSession.StartInfo.FileName = VideoPlayerExecutable;
+            ActiveSession.StartInfo.Arguments = "rtp://@" + ip + ":" + port.ToString();
+            ActiveSession.EnableRaisingEvents = true;
+            ActiveSession.Start();
+            ActiveSession.Exited += Process_Exited;
         }
     }
 }

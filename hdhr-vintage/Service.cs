@@ -75,7 +75,6 @@ namespace hdhr_vintage
                     if(channel.ChannelNumber > 0)
                     {
                         var program = new Program();
-                        //program.Channel = channel;
                         program.ChannelID = channel.ChannelID;
 
                         string[] programComponents = line.Split(' ');
@@ -86,13 +85,8 @@ namespace hdhr_vintage
 
                         program = DataAccess.DatabaseCommand.CreateEntity(program);
                     }
-                    
                 }
-
             }
-
-
-            //throw new NotImplementedException("todo");
         }
 
 
