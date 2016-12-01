@@ -177,5 +177,20 @@ namespace hdhr_vintage
             _activeSession.Start();
             _activeSession.Exited += Process_Exited;
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //todo check for hanging chad stream before closing window
+
+            MessageBoxResult result = MessageBox.Show("Stream is active. Do you want to kill it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                //todo don't hardcode this
+                string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
+                string stopResult = _service.ExecuteConfigProcess(args);
+            }
+
+
+        }
     }
 }

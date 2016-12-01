@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:hdhr_vintage"
         mc:Ignorable="d"
-        Title="HDHR Vintage" Height="400" Width="600">
+        Title="HDHR Vintage" Height="400" Width="600" Closing="Window_Closing">
     <Grid Margin="0,1,0.333,-0.667">
         <!--TOP SECTION WITH EXECUTABLE-->
         <!--/TOP SECTION WITH EXECUTABLE-->
