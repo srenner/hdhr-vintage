@@ -63,7 +63,7 @@ namespace hdhr_vintage.DataAccess
                 command.ExecuteNonQuery();
 
                 sql = @"CREATE TABLE `Program` (`ProgramID` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `ProgramNumber` TEXT NOT NULL, 
-                        `FriendlyChannelNumber` TEXT NOT NULL, `CallSign` TEXT NULL, `ChannelID` INT NOT NULL,
+                        `FriendlyChannelNumber` TEXT NOT NULL, `CallSign` TEXT NULL, `IsFavorite` INTEGER NOT NULL, `ChannelID` INT NOT NULL,
 	                    FOREIGN KEY(`ChannelID`) REFERENCES Channel);";
                 command = new SQLiteCommand(sql, conn);
                 command.ExecuteNonQuery();

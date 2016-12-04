@@ -19,6 +19,8 @@ namespace hdhr_vintage.Models
         public string FriendlyChannelNumber { get; set; }
         public string CallSign { get; set; }
 
+        public bool IsFavorite { get; set; }
+
         public int ChannelID { get; set; }
         public Channel Channel { get; set; }
 
