@@ -36,9 +36,9 @@ namespace hdhr_vintage
             _service = new Service(@"C:\Program Files\Silicondust\HDHomeRun\hdhomerun_config.exe", @"C:\Program Files (x86)\VideoLAN\VLC\vlc.exe");
 
             //todo this will break if the database is empty
-            var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
-            var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
-            gridPrograms.ItemsSource = programs;
+            //var tuner = DatabaseCommand.GetTuner(DatabaseCommand.GetDevices()[0].DeviceID, 1);
+            //var programs = DatabaseCommand.GetPrograms(tuner.TunerID);
+            //gridPrograms.ItemsSource = programs;
         }
 
         private void btnTunerScan_Click(object sender, RoutedEventArgs e)
@@ -62,8 +62,6 @@ namespace hdhr_vintage
                 tuner.ChannelMap = "us-bcast"; //temporary
                 DatabaseCommand.CreateEntity(tuner);
             }
-
-            
 
             var devices = DatabaseCommand.GetDevices();
 
@@ -90,14 +88,14 @@ namespace hdhr_vintage
 
         private void btnStreamInfo_Click(object sender, RoutedEventArgs e)
         {
-            string args = HDHRConfigCommand.GetStreamInfo("10183772", "1");
+            string args = HDHRConfigCommand.GetStreamInfo(DatabaseCommand.GetDevices()[0].DeviceID, "1");
             var result = _service.ExecuteConfigProcess(args);
             UpdateInfoText(result);
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
+            string args = HDHRConfigCommand.GetEndStreamCommand(DatabaseCommand.GetDevices()[0].DeviceID, "1");
             string result = _service.ExecuteConfigProcess(args);
         }
 
@@ -180,17 +178,16 @@ namespace hdhr_vintage
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //todo check for hanging chad stream before closing window
+            //kill stream without asking
+            //todo make this configurable
+            string args = HDHRConfigCommand.GetEndStreamCommand(DatabaseCommand.GetDevices()[0].DeviceID, "1");
+            string stopResult = _service.ExecuteConfigProcess(args);
 
-            MessageBoxResult result = MessageBox.Show("Stream is active. Do you want to kill it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
-            if (result == MessageBoxResult.Yes)
-            {
-                //todo don't hardcode this
-                string args = HDHRConfigCommand.GetEndStreamCommand("10183772", "1");
-                string stopResult = _service.ExecuteConfigProcess(args);
-            }
+            //MessageBoxResult result = MessageBox.Show("Stream is active. Do you want to kill it?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            //if (result == MessageBoxResult.Yes)
+            //{
 
-
+            //}
         }
     }
 }
