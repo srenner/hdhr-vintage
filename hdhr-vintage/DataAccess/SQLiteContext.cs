@@ -12,7 +12,8 @@ namespace hdhr_vintage.DataAccess
     {
         public SQLiteContext() : base("SQLiteContext")
         {
-
+            Database.SetInitializer<SQLiteContext>(null);
+            this.Database.Connection.ConnectionString = "Data Source=" + Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + "hdhr-vintage.db";
         }
 
         public DbSet<Models.Channel> Channel { get; set; }
@@ -22,6 +23,8 @@ namespace hdhr_vintage.DataAccess
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
+            
+            //modelBuilder
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
         }
     }

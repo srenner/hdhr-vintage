@@ -34,7 +34,7 @@ namespace hdhr_vintage.DataAccess
 
         public static void CreateDatabase()
         {
-            string filename = "hdhr-vintage.db";
+            string filename = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + "hdhr-vintage.db";
 
             if(File.Exists(filename))
             {
